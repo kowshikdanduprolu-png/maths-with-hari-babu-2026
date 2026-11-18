@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maths With Hari Babu</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:#f1f5f9;color:#172554}
+header{background:#123b70;color:white;padding:24px 15px;text-align:center}
+header h1{margin:0}
+main{max-width:850px;margin:20px auto;padding:15px}
+.card{background:white;padding:20px;border-radius:14px;margin-bottom:18px;box-shadow:0 3px 12px #0001}
+input,select,textarea,button{width:100%;padding:12px;margin:7px 0;border:1px solid #cbd5e1;border-radius:8px;font-size:16px}
+button{background:#1769aa;color:white;border:0;font-weight:bold;cursor:pointer}
+button:hover{background:#104c80}
+.hidden{display:none}
+.lesson{padding:12px;border-bottom:1px solid #ddd}
+small{color:#64748b}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Maths With Hari Babu</h1>
+<p>Learn Mathematics • Learn with Confidence</p>
+</header>
+
+<main>
+<div class="card">
+<h2>Welcome Students!</h2>
+<p>Online Mathematics Classes for Classes 6–10 and Intermediate.</p>
+</div>
+
+<div class="card" id="authBox">
+<h2>Login / Register</h2>
+<input id="name" placeholder="Your full name (for registration)">
+<input id="email" type="email" placeholder="Email address">
+<input id="password" type="password" placeholder="Password">
+<button onclick="register()">Create Student Account</button>
+<button onclick="login()">Login</button>
+<p id="authMessage"></p>
+</div>
+
+<div class="card hidden" id="accountBox">
+<h2 id="welcome"></h2>
+<p id="roleText"></p>
+<button onclick="logout()">Logout</button>
+</div>
+
+<div class="card hidden" id="uploadBox">
+<h2>Teacher Upload</h2>
+<input id="title" placeholder="Lesson title">
+<select id="course">
+<option>Class 6</option>
+<option>Class 7</option>
+<option>Class 8</option>
+<option>Class 9</option>
+<option>Class 10</option>
+<option>Intermediate 1st Year</option>
+<option>Intermediate 2nd Year</option>
+</select>
+<select id="materialType">
+<option value="Video">Video Class</option>
+<option value="PDF">PDF Notes</option>
+<option value="Image">Image</option>
+</select>
+<textarea id="description" placeholder="Lesson description"></textarea>
+<input id="lessonFile" type="file" accept="video/*,application/pdf,image/*">
+<button onclick="uploadLesson()">Upload Lesson</button>
+<p id="uploadMessage"></p>
+</div>
+
+<div class="card">
+<h2>Available Lessons</h2>
+<div id="lessons">Please login to view lessons.</div>
+</div>
+</main>
+
+<script>
+const SUPABASE_URL = "https://ilkjzgnymzdhwaprhugp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Z2z9cjb8wglHTZ9qciP7_Q_So8PVatI";
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let currentRole = "student";
+
+async function register(){
+ const fullName = document.getElementById("name").value.trim();
+ const email = document.getElementById("email").value.trim();
+ const password = document.getElementById("password").value;
+
+ if(!fullName || !email || password.length < 6){
+  authMessage("Enter your name, email and a password of at least 6 characters.");
+  return;
+ }
+
+ const {data,error} = await db.auth.signUp({
+  email,password,
+  options:{data:{full_name:fullName}}
+ });
+
+ if(error){authMessage(error.message);return;}
+ authMessage("Registration submitted! Check your email if confirmation is required.");
+ if(data.session) await loadUser();
+}
+
+async function login(){
+ const email = document.getElementById("email").value.trim();
+ const password = document.getElementById("password").value;
+
+ const {error} = await db.auth.signInWithPassword({email,password});
+ if(error){authMessage(error.message);return;}
+ await loadUser();
+}
+
+function authMessage(message){
+ document.getElementById("authMessage").textContent = message;
+}
+
+async function loadUser(){
+ const {data:{user}} = await db.auth.getUser();
+ if(!user)return;
+
+ currentUser = user;
+
+ const {data:profile,error} = await db
+  .from("profiles")
+  .select("full_name,role")
+  .eq("id",user.id)
+  .single();
+
+ if(error){
+  authMessage("Your account profile is not ready. Please contact the website administrator.");
+  return;
+ }
+
+ currentRole = profile.role;
+ document.getElementById("authBox").classList.add("hidden");
+ document.getElementById("accountBox").classList.remove("hidden");
+ document.getElementById("welcome").textContent = "Welcome, " + (profile.full_name || user.email);
+ document.getElementById("roleText").textContent = "Account type: " + currentRole;
+
+ if(currentRole === "teacher" || currentRole === "admin"){
+  document.getElementById("uploadBox").classList.remove("hidden");
+ }
+
+ await loadLessons();
+}
+
+async function logout(){
+ await db.auth.signOut();
+ location.reload();
+}
+
+async function uploadLesson(){
+ if(!currentUser || !["teacher","admin"].includes(currentRole)){
+  uploadMessage("Only approved teachers can upload.");
+  return;
+ }
+
+ const title = document.getElementById("title").value.trim();
+ const course = document.getElementById("course").value;
+ const materialType = document.getElementById("materialType").value;
+ const description = document.getElementById("description").value;
+ const file = document.getElementById("lessonFile").files[0];
+
+ if(!title || !file){
+  uploadMessage("Enter a lesson title and select a file.");
+  return;
+ }
+
+ uploadMessage("Uploading...");
+
+ const filePath = currentUser.id + "/" + Date.now() + "_" + file.name;
+
+ const {error:storageError} = await db.storage
+  .from("lesson-files")
+  .upload(filePath,file);
+
+ if(storageError){
+  uploadMessage(storageError.message);
+  return;
+ }
+
+ const {error} = await db.from("lessons").insert({
+  title,
+  course,
+  material_type:materialType,
+  description,
+  file_path:filePath,
+  teacher_id:currentUser.id
+ });
+
+ if(error){
+  uploadMessage(error.message);
+  return;
+ }
+
+ uploadMessage("Lesson uploaded successfully!");
+ document.getElementById("title").value="";
+ document.getElementById("description").value="";
+ document.getElementById("lessonFile").value="";
+ await loadLessons();
+}
+
+function uploadMessage(message){
+ document.getElementById("uploadMessage").textContent = message;
+}
+
+async function loadLessons(){
+ const box = document.getElementById("lessons");
+
+ if(!currentUser){
+  box.textContent = "Please login to view lessons.";
+  return;
+ }
+
+ const {data,error} = await db.from("lessons")
+  .select("*")
+  .order("created_at",{ascending:false});
+
+ if(error){
+  box.textContent = error.message;
+  return;
+ }
+
+ box.innerHTML = "";
+
+ if(!data || data.length===0){
+  box.textContent = "No lessons uploaded yet.";
+  return;
+ }
+
+ for(const lesson of data){
+  const {data:fileData,error:fileError} = await db.storage
+   .from("lesson-files")
+   .createSignedUrl(lesson.file_path,3600);
+
+  const item = document.createElement("div");
+  item.className = "lesson";
+
+  const heading = document.createElement("h3");
+  heading.textContent = lesson.title;
+
+  const info = document.createElement("p");
+  info.textContent = lesson.course + " • " + lesson.material_type;
+
+  const description = document.createElement("p");
+  description.textContent = lesson.description || "";
+
+  item.append(heading,info,description);
+
+  if(!fileError && fileData){
+   const link = document.createElement("a");
+   link.href = fileData.signedUrl;
+   link.target = "_blank";
+   link.rel = "noopener";
+   link.textContent = "Open Lesson";
+   item.append(link);
+  }
+
+  box.append(item);
+ }
+}
+
+db.auth.onAuthStateChange((event,session)=>{
+ if(session && !currentUser){
+  setTimeout(loadUser,0);
+ }
+});
+
+loadUser();
+</script>
+</body>
+  </html>
