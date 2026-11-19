@@ -2,276 +2,153 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101d3a">
 <title>Maths With Hari Babu</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:#f1f5f9;color:#172554}
-header{background:#123b70;color:white;padding:24px 15px;text-align:center}
-header h1{margin:0}
-main{max-width:850px;margin:20px auto;padding:15px}
-.card{background:white;padding:20px;border-radius:14px;margin-bottom:18px;box-shadow:0 3px 12px #0001}
-input,select,textarea,button{width:100%;padding:12px;margin:7px 0;border:1px solid #cbd5e1;border-radius:8px;font-size:16px}
-button{background:#1769aa;color:white;border:0;font-weight:bold;cursor:pointer}
-button:hover{background:#104c80}
-.hidden{display:none}
-.lesson{padding:12px;border-bottom:1px solid #ddd}
-small{color:#64748b}
+:root{--navy:#101d3a;--blue:#203b6d;--gold:#f2c45d;--ink:#172033;--muted:#667085;--paper:#f5f7fb}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Arial,system-ui,sans-serif;background:var(--paper);color:var(--ink)}
+header{background:var(--navy);color:white;position:sticky;top:0;z-index:5}.nav{max-width:1120px;margin:auto;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;gap:15px}.brand{font-weight:900}.brand span{color:var(--gold)}nav{display:flex;gap:17px;align-items:center;flex-wrap:wrap}nav a{color:white;text-decoration:none;font-size:14px}
+button,.btn{border:0;border-radius:11px;padding:12px 16px;font-weight:bold;cursor:pointer;background:var(--gold);color:#172033;text-decoration:none;display:inline-block}button:disabled{opacity:.6;cursor:wait}.outline{background:transparent;border:1px solid #ffffff88;color:white}.dark{background:var(--navy);color:white}
+.hero{background:radial-gradient(circle at 85% 20%,#45689b,transparent 32%),linear-gradient(120deg,var(--navy),var(--blue));color:white;padding:72px 20px}.hero-in{max-width:1120px;margin:auto;display:grid;grid-template-columns:1.2fr .8fr;gap:35px;align-items:center}.eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:900;color:#a8780c}.hero .eyebrow{color:var(--gold)}h1{font-size:clamp(38px,5vw,62px);line-height:1.05;margin:15px 0}h1 span{color:var(--gold)}.hero p{color:#dce5f5;line-height:1.7;max-width:590px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:25px}.hero-card{background:#ffffff15;border:1px solid #ffffff40;border-radius:22px;padding:28px}.hero-card .symbol{font-size:55px}.hero-card p{font-size:14px}
+.wrap{max-width:1120px;margin:auto;padding:55px 20px}h2{color:var(--navy);font-size:30px;margin:8px 0}.sub{color:var(--muted);line-height:1.65}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}.card{background:white;border:1px solid #e6eaf2;border-radius:17px;padding:22px;box-shadow:0 8px 24px #14264b09}.course{transition:.2s}.course:hover{transform:translateY(-4px)}.icon{font-size:25px;background:#fff5d9;border-radius:13px;width:47px;height:47px;display:grid;place-items:center}.card h3{color:var(--navy);margin-bottom:6px}.card p{color:var(--muted);font-size:14px;line-height:1.6}
+.features{background:white}.feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.feature{background:var(--paper);padding:19px;border-radius:15px}.feature b{display:block;color:var(--navy);margin:9px 0}.feature span{font-size:13px;color:var(--muted);line-height:1.5}.about{display:grid;grid-template-columns:1fr 1fr;gap:18px}.about-dark{background:var(--navy);color:white;border-radius:18px;padding:25px}.about-dark h2{color:white}.about-dark p{color:#dce5f5;line-height:1.7}
+.panel{display:none;background:white;border:1px solid #e6eaf2;border-radius:18px;padding:24px;margin-top:25px}.panel.active{display:block}.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}input,select,textarea{width:100%;padding:12px;border:1px solid #d8deea;border-radius:10px;font:inherit;margin:5px 0}textarea{min-height:85px}.full{grid-column:1/-1}.lesson-list{display:grid;gap:10px;margin-top:18px}.lesson{border:1px solid #e6eaf2;border-radius:12px;padding:13px;display:flex;justify-content:space-between;align-items:center;gap:12px}.note{font-size:12px;color:var(--muted);line-height:1.5}.empty{padding:18px;background:var(--paper);border-radius:12px;color:var(--muted)}
+.modal{display:none;position:fixed;inset:0;background:#081329dd;z-index:20;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.box{background:white;border-radius:18px;padding:25px;width:min(440px,100%);max-height:92vh;overflow:auto}.box h2{font-size:25px}.hidden{display:none!important}footer{background:var(--navy);color:#dce5f5;text-align:center;padding:28px;font-size:13px}.status{padding:11px 13px;border-radius:10px;background:#eef5ff;color:#17477f;margin-top:12px;white-space:pre-wrap}.status:empty{display:none}
+@media(max-width:800px){.hero-in{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}.feature-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.nav{align-items:flex-start;flex-direction:column}nav{gap:12px}.grid,.feature-grid,.about,.form{grid-template-columns:1fr}.full{grid-column:auto}.wrap{padding:40px 16px}.hero{padding:50px 16px}.lesson{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
 <body>
-
-<header>
-<h1>Maths With Hari Babu</h1>
-<p>Learn Mathematics • Learn with Confidence</p>
-</header>
-
+<header><div class="nav"><div class="brand">MATHS <span>WITH</span> HARI BABU</div><nav><a href="#home">Home</a><a href="#courses">Courses</a><a href="#features">Features</a><a href="#about">About</a><button id="authButton" onclick="openLogin()">Login / Register</button></nav></div></header>
 <main>
-<div class="card">
-<h2>Welcome Students!</h2>
-<p>Online Mathematics Classes for Classes 6–10 and Intermediate.</p>
-</div>
-
-<div class="card" id="authBox">
-<h2>Login / Register</h2>
-<input id="name" placeholder="Your full name (for registration)">
-<input id="email" type="email" placeholder="Email address">
-<input id="password" type="password" placeholder="Password">
-<button onclick="register()">Create Student Account</button>
-<button onclick="login()">Login</button>
-<p id="authMessage"></p>
-</div>
-
-<div class="card hidden" id="accountBox">
-<h2 id="welcome"></h2>
-<p id="roleText"></p>
-<button onclick="logout()">Logout</button>
-</div>
-
-<div class="card hidden" id="uploadBox">
-<h2>Teacher Upload</h2>
-<input id="title" placeholder="Lesson title">
-<select id="course">
-<option>Class 6</option>
-<option>Class 7</option>
-<option>Class 8</option>
-<option>Class 9</option>
-<option>Class 10</option>
-<option>Intermediate 1st Year</option>
-<option>Intermediate 2nd Year</option>
-</select>
-<select id="materialType">
-<option value="Video">Video Class</option>
-<option value="PDF">PDF Notes</option>
-<option value="Image">Image</option>
-</select>
-<textarea id="description" placeholder="Lesson description"></textarea>
-<input id="lessonFile" type="file" accept="video/*,application/pdf,image/*">
-<button onclick="uploadLesson()">Upload Lesson</button>
-<p id="uploadMessage"></p>
-</div>
-
-<div class="card">
-<h2>Available Lessons</h2>
-<div id="lessons">Please login to view lessons.</div>
-</div>
+<section class="hero" id="home"><div class="hero-in"><div><div class="eyebrow">A better way to learn mathematics</div><h1>Understand Maths.<br><span>Grow with Confidence.</span></h1><p>Learn step by step with Hari Babu. Access mathematics lessons, study notes and practice material for school classes and Intermediate.</p><div class="actions"><a class="btn" href="#courses">Explore Courses →</a><button class="outline" onclick="openLogin()">Student / Teacher Login</button></div></div><div class="hero-card"><div class="symbol">📐</div><div class="eyebrow">Maths made simpler</div><h3 style="color:white">Every concept, one step at a time.</h3><p>Watch recorded classes, revise with notes, practise questions and keep your learning organised.</p></div></div></section>
+<section class="wrap" id="courses"><div class="eyebrow">Choose your level</div><h2>Explore Courses</h2><p class="sub">Select your class or Intermediate year.</p><div class="grid" id="courseGrid"></div></section>
+<section class="features" id="features"><div class="wrap"><div class="eyebrow">Your learning toolkit</div><h2>Everything in one place</h2><p class="sub">A simple learning space for students and a teaching workspace for the teacher.</p><div class="feature-grid"><div class="feature">🎥<b>Recorded lessons</b><span>Revisit topic-wise video classes.</span></div><div class="feature">📄<b>PDF study notes</b><span>Keep notes and revision material together.</span></div><div class="feature">📝<b>Homework & tests</b><span>Practise questions and complete assignments.</span></div><div class="feature">📊<b>Marks & progress</b><span>Review scores and track learning progress.</span></div></div></div></section>
+<section class="wrap" id="about"><div class="about"><div class="card"><div class="eyebrow">About the classes</div><h2>Learn with Hari Babu</h2><p class="sub">A mathematics learning website for Classes 6 to 10 and Intermediate 1st and 2nd Year. Learn through lessons, notes and regular practice.</p></div><div class="about-dark"><div class="eyebrow">Our goal</div><h2>Learn Maths. Build Confidence.</h2><p>Strong basics make difficult problems easier. Learn at your own pace, practise regularly and keep improving.</p></div></div>
+<div class="panel" id="dashboard"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><div><div class="eyebrow">Your workspace</div><h2 id="dashTitle">Dashboard</h2><p class="sub" id="dashIntro"></p></div><button class="dark" onclick="logout()">Log out</button></div>
+<div id="studentTools" class="hidden"><h3>Student learning materials</h3><p class="sub">Browse materials shared by your teacher.</p><button id="requestTeacherBtn" onclick="requestTeacher()">Request teacher access</button><p id="requestStatus" class="note"></p></div>
+<div id="teacherTools" class="hidden"><h3>Add a lesson or study note</h3><div class="form"><input id="lessonTitle" placeholder="Lesson title"><select id="lessonCourse"><option>Class 6</option><option>Class 7</option><option>Class 8</option><option>Class 9</option><option>Class 10</option><option>Intermediate 1st Year</option><option>Intermediate 2nd Year</option></select><select id="lessonType"><option value="Video">Video class</option><option value="PDF">PDF notes</option><option value="Image">Image</option></select><textarea id="lessonDesc" class="full" placeholder="Short description or chapter name"></textarea><input id="lessonFile" class="full" type="file" accept="video/*,application/pdf,image/*"><button class="full" onclick="uploadLesson()">Upload learning material</button></div><h3>Teacher access requests</h3><div id="requestsList" class="lesson-list">Loading requests…</div></div>
+<div id="status" class="status"></div><div class="lesson-list" id="lessonList"><div class="empty">Please log in to view lessons.</div></div></div></section>
 </main>
-
+<footer>© 2026 Maths With Hari Babu · Learn Maths. Build Confidence. Achieve Success!</footer>
+<div class="modal show" id="loginModal"><div class="box"><div class="eyebrow">Welcome to your classroom</div><h2>Login / Register</h2><p class="sub">Sign in to access your learning space.</p><input id="userName" placeholder="Full name (for new registration)"><input id="userEmail" type="email" placeholder="Email address"><input id="userPassword" type="password" placeholder="Password (at least 6 characters)"><button style="width:100%;margin-top:10px" onclick="register()">Create Student Account</button><button class="dark" style="width:100%;margin-top:8px" onclick="login()">Login</button><p id="authMessage" class="status"></p><p class="note">New accounts are created as students. Teacher access requires approval by Hari Babu.</p></div></div>
 <script>
-const SUPABASE_URL = "https://ilkjzgnymzdhwaprhugp.supabase.co";
-const SUPABASE_KEY = "sb_publishable_Z2z9cjb8wglHTZ9qciP7_Q_So8PVatI";
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let currentUser = null;
-let currentRole = "student";
-
-async function register(){
- const fullName = document.getElementById("name").value.trim();
- const email = document.getElementById("email").value.trim();
- const password = document.getElementById("password").value;
-
- if(!fullName || !email || password.length < 6){
-  authMessage("Enter your name, email and a password of at least 6 characters.");
-  return;
- }
-
- const {data,error} = await db.auth.signUp({
-  email,password,
-  options:{data:{full_name:fullName}}
- });
-
- if(error){authMessage(error.message);return;}
- authMessage("Registration submitted! Check your email if confirmation is required.");
- if(data.session) await loadUser();
+const SUPABASE_URL="https://ilkjzgnymzdhwaprhugp.supabase.co";
+const SUPABASE_KEY="sb_publishable_Z2z9cjb8wglHTZ9qciP7_Q_So8PVatI";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const courses=[["Class 6","Mathematics","📘"],["Class 7","Mathematics","📗"],["Class 8","Mathematics","📙"],["Class 9","Mathematics","📕"],["Class 10","Mathematics","🎓"],["Intermediate 1st Year","Maths 1A & 1B","📐"],["Intermediate 2nd Year","Maths 2A & 2B","📊"]];
+let currentUser=null,currentRole="student";
+const $=id=>document.getElementById(id);
+function message(id,text){$(id).textContent=text}
+function openLogin(){$("loginModal").classList.add("show")}
+function closeLogin(){$("loginModal").classList.remove("show")}
+function renderCourses(){
+ const grid=$("courseGrid");grid.innerHTML="";
+ courses.forEach(([name,desc,icon])=>{const c=document.createElement("article");c.className="card course";const i=document.createElement("div");i.className="icon";i.textContent=icon;const h=document.createElement("h3");h.textContent=name;const p=document.createElement("p");p.textContent=desc;c.append(i,h,p);grid.append(c)});
 }
-
+renderCourses();
+async function register(){
+ const fullName=$("userName").value.trim(),email=$("userEmail").value.trim(),password=$("userPassword").value;
+ if(!fullName||!email||password.length<6){message("authMessage","Enter your name, email and a password of at least 6 characters.");return}
+ message("authMessage","Creating your account…");
+ const {data,error}=await db.auth.signUp({email,password,options:{data:{full_name:fullName}}});
+ if(error){message("authMessage",error.message);return}
+ if(data.session){await loadUser()}else{message("authMessage","Registration submitted. Check your email if confirmation is required, then log in.")}
+}
 async function login(){
- const email = document.getElementById("email").value.trim();
- const password = document.getElementById("password").value;
-
- const {error} = await db.auth.signInWithPassword({email,password});
- if(error){authMessage(error.message);return;}
+ const email=$("userEmail").value.trim(),password=$("userPassword").value;
+ if(!email||!password){message("authMessage","Enter your email and password.");return}
+ message("authMessage","Signing in…");
+ const {error}=await db.auth.signInWithPassword({email,password});
+ if(error){message("authMessage",error.message);return}
  await loadUser();
 }
-
-function authMessage(message){
- document.getElementById("authMessage").textContent = message;
-}
-
 async function loadUser(){
- const {data:{user}} = await db.auth.getUser();
- if(!user)return;
-
- currentUser = user;
-
- const {data:profile,error} = await db
-  .from("profiles")
-  .select("full_name,role")
-  .eq("id",user.id)
-  .single();
-
- if(error){
-  authMessage("Your account profile is not ready. Please contact the website administrator.");
-  return;
- }
-
- currentRole = profile.role;
- document.getElementById("authBox").classList.add("hidden");
- document.getElementById("accountBox").classList.remove("hidden");
- document.getElementById("welcome").textContent = "Welcome, " + (profile.full_name || user.email);
- document.getElementById("roleText").textContent = "Account type: " + currentRole;
-
- if(currentRole === "teacher" || currentRole === "admin"){
-  document.getElementById("uploadBox").classList.remove("hidden");
- }
-
+ const {data:{user},error:userError}=await db.auth.getUser();
+ if(userError||!user)return;
+ currentUser=user;
+ const {data:profile,error}=await db.from("profiles").select("full_name,role").eq("id",user.id).single();
+ if(error||!profile){message("authMessage","Your profile is not ready yet. Please contact the website administrator.");return}
+ currentRole=profile.role||"student";
+ closeLogin();
+ $("authButton").textContent="My Dashboard";
+ $("dashboard").classList.add("active");
+ $("dashTitle").textContent=(currentRole==="teacher"||currentRole==="admin"?"Teacher":"Student")+" Dashboard";
+ $("dashIntro").textContent="Welcome, "+(profile.full_name||user.email)+"!";
+ $("teacherTools").classList.toggle("hidden",!["teacher","admin"].includes(currentRole));
+ $("studentTools").classList.toggle("hidden",["teacher","admin"].includes(currentRole));
  await loadLessons();
+ if(["teacher","admin"].includes(currentRole))await loadRequests();
+ $("dashboard").scrollIntoView({behavior:"smooth",block:"start"});
 }
-
-async function logout(){
- await db.auth.signOut();
- location.reload();
-}
-
+async function logout(){await db.auth.signOut();currentUser=null;currentRole="student";$("dashboard").classList.remove("active");$("teacherTools").classList.add("hidden");$("studentTools").classList.add("hidden");$("authButton").textContent="Login / Register";$("lessonList").innerHTML='<div class="empty">Please log in to view lessons.</div>';openLogin()}
 async function uploadLesson(){
- if(!currentUser || !["teacher","admin"].includes(currentRole)){
-  uploadMessage("Only approved teachers can upload.");
-  return;
- }
-
- const title = document.getElementById("title").value.trim();
- const course = document.getElementById("course").value;
- const materialType = document.getElementById("materialType").value;
- const description = document.getElementById("description").value;
- const file = document.getElementById("lessonFile").files[0];
-
- if(!title || !file){
-  uploadMessage("Enter a lesson title and select a file.");
-  return;
- }
-
- uploadMessage("Uploading...");
-
- const filePath = currentUser.id + "/" + Date.now() + "_" + file.name;
-
- const {error:storageError} = await db.storage
-  .from("lesson-files")
-  .upload(filePath,file);
-
- if(storageError){
-  uploadMessage(storageError.message);
-  return;
- }
-
- const {error} = await db.from("lessons").insert({
-  title,
-  course,
-  material_type:materialType,
-  description,
-  file_path:filePath,
-  teacher_id:currentUser.id
- });
-
- if(error){
-  uploadMessage(error.message);
-  return;
- }
-
- uploadMessage("Lesson uploaded successfully!");
- document.getElementById("title").value="";
- document.getElementById("description").value="";
- document.getElementById("lessonFile").value="";
+ if(!currentUser||!["teacher","admin"].includes(currentRole)){message("status","Only approved teachers can upload.");return}
+ const title=$("lessonTitle").value.trim(),course=$("lessonCourse").value,type=$("lessonType").value,description=$("lessonDesc").value.trim(),file=$("lessonFile").files[0];
+ if(!title||!file){message("status","Enter a lesson title and choose a file.");return}
+ if(file.size>50*1024*1024){message("status","This file is larger than the bucket's 50 MB limit.");return}
+ message("status","Uploading file…");
+ const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+ const filePath=currentUser.id+"/"+Date.now()+"_"+safeName;
+ const {error:storageError}=await db.storage.from("lesson-files").upload(filePath,file);
+ if(storageError){message("status","Upload failed: "+storageError.message);return}
+ const {error}=await db.from("lessons").insert({title,course,material_type:type,description,file_path:filePath,teacher_id:currentUser.id});
+ if(error){message("status","File uploaded, but lesson record failed: "+error.message+" Please contact the administrator before uploading it again.");return}
+ message("status","Lesson uploaded successfully!");
+ $("lessonTitle").value="";$("lessonDesc").value="";$("lessonFile").value="";
  await loadLessons();
 }
-
-function uploadMessage(message){
- document.getElementById("uploadMessage").textContent = message;
-}
-
 async function loadLessons(){
- const box = document.getElementById("lessons");
-
- if(!currentUser){
-  box.textContent = "Please login to view lessons.";
-  return;
- }
-
- const {data,error} = await db.from("lessons")
-  .select("*")
-  .order("created_at",{ascending:false});
-
- if(error){
-  box.textContent = error.message;
-  return;
- }
-
- box.innerHTML = "";
-
- if(!data || data.length===0){
-  box.textContent = "No lessons uploaded yet.";
-  return;
- }
-
+ const box=$("lessonList");
+ if(!currentUser){box.innerHTML='<div class="empty">Please log in to view lessons.</div>';return}
+ box.textContent="Loading lessons…";
+ const {data,error}=await db.from("lessons").select("*").order("created_at",{ascending:false});
+ if(error){box.textContent="Could not load lessons: "+error.message;return}
+ box.innerHTML="";
+ if(!data||!data.length){box.innerHTML='<div class="empty">No lessons uploaded yet.</div>';return}
  for(const lesson of data){
-  const {data:fileData,error:fileError} = await db.storage
-   .from("lesson-files")
-   .createSignedUrl(lesson.file_path,3600);
-
-  const item = document.createElement("div");
-  item.className = "lesson";
-
-  const heading = document.createElement("h3");
-  heading.textContent = lesson.title;
-
-  const info = document.createElement("p");
-  info.textContent = lesson.course + " • " + lesson.material_type;
-
-  const description = document.createElement("p");
-  description.textContent = lesson.description || "";
-
-  item.append(heading,info,description);
-
-  if(!fileError && fileData){
-   const link = document.createElement("a");
-   link.href = fileData.signedUrl;
-   link.target = "_blank";
-   link.rel = "noopener";
-   link.textContent = "Open Lesson";
-   item.append(link);
-  }
-
+  const item=document.createElement("div");item.className="lesson";
+  const info=document.createElement("div"),heading=document.createElement("b"),detail=document.createElement("p");
+  heading.textContent=lesson.title;detail.className="note";detail.textContent=(lesson.course||"")+" · "+(lesson.material_type||"")+(lesson.description?" · "+lesson.description:"");info.append(heading,detail);item.append(info);
+  const {data:fileData,error:fileError}=await db.storage.from("lesson-files").createSignedUrl(lesson.file_path,3600);
+  if(!fileError&&fileData){const link=document.createElement("a");link.href=fileData.signedUrl;link.target="_blank";link.rel="noopener noreferrer";link.className="pill";link.textContent="Open lesson";item.append(link)}
+  else{const note=document.createElement("span");note.className="note";note.textContent="File not available";item.append(note)}
   box.append(item);
  }
 }
-
-db.auth.onAuthStateChange((event,session)=>{
- if(session && !currentUser){
-  setTimeout(loadUser,0);
+async function requestTeacher(){
+ if(!currentUser)return;
+ $("requestTeacherBtn").disabled=true;message("requestStatus","Submitting request…");
+ const {error}=await db.from("teacher_requests").insert({user_id:currentUser.id,status:"pending"});
+ $("requestTeacherBtn").disabled=false;
+ if(error){message("requestStatus","Could not submit: "+error.message);return}
+ message("requestStatus","Request submitted. Hari Babu can review it from his teacher dashboard.");
+}
+async function loadRequests(){
+ const box=$("requestsList");box.textContent="Loading requests…";
+ const {data,error}=await db.from("teacher_requests").select("id,user_id,status,created_at").eq("status","pending").order("created_at",{ascending:true});
+ if(error){box.textContent="Could not load requests: "+error.message;return}
+ box.innerHTML="";
+ if(!data||!data.length){box.innerHTML='<div class="empty">No pending teacher requests.</div>';return}
+ for(const req of data){
+  const row=document.createElement("div");row.className="lesson";
+  const label=document.createElement("span");label.textContent="Teacher access request · "+req.user_id;
+  const actions=document.createElement("div");actions.style.display="flex";actions.style.gap="8px";
+  for(const decision of ["approved","rejected"]){const b=document.createElement("button");b.textContent=decision==="approved"?"Approve":"Reject";b.onclick=()=>reviewRequest(req.id,decision);actions.append(b)}
+  row.append(label,actions);box.append(row);
  }
-});
-
+}
+async function reviewRequest(id,decision){
+ message("status","Updating request…");
+ const {data,error}=await db.rpc("review_teacher_request",{request_id:id,decision});
+ if(error){message("status","Could not review request: "+error.message);return}
+ message("status","Request "+data+".");
+ await loadRequests();
+}
+db.auth.onAuthStateChange((event,session)=>{if(session&&!currentUser)setTimeout(()=>loadUser(),0);if(!session&&currentUser){currentUser=null}});
 loadUser();
 </script>
 </body>
-  </html>
+</html>
