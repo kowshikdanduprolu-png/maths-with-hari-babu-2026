@@ -167,6 +167,7 @@ async function reviewRequest(id,decision){
 }
 db.auth.onAuthStateChange((event,session)=>{if(session&&!currentUser)setTimeout(()=>loadUser(),0);if(!session&&currentUser){currentUser=null}});
 loadUser();
+ <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </script>
 </body>
 </html>
