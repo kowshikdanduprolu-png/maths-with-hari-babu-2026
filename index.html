@@ -58,32 +58,34 @@ async function register(){
  if(data.session){await loadUser()}else{message("authMessage","Registration submitted. Check your email if confirmation is required, then log in.")}
 }
 async function login(){
- const email=$("userEmail").value.trim();
- const password=$("userPassword").value;
+ const email = document.getElementById("email").value.trim();
+ const password = document.getElementById("password").value;
 
- if(!email||!password){
-  message("authMessage","Enter your email and password.");
+ if(!email || !password){
+  authMessage("Enter your email and password.");
   return;
  }
 
- message("authMessage","Connecting to Supabase...");
+ authMessage("Connecting to Supabase...");
 
  try {
-  const {error}=await db.auth.signInWithPassword({
-   email,password
+  const {error} = await db.auth.signInWithPassword({
+   email,
+   password
   });
 
   if(error){
-   message("authMessage","Login error: "+error.message);
+   authMessage("Login error: " + error.message);
    return;
   }
 
-  message("authMessage","Login successful! Loading dashboard...");
+  authMessage("Login successful! Loading dashboard...");
   await loadUser();
 
  } catch(error) {
-  message("authMessage","Error: "+error.message);
+  authMessage("Error: " + error.message);
  }
+}
 }
 }
 async function loadUser(){
