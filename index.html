@@ -34,6 +34,7 @@ button,.btn{border:0;border-radius:11px;padding:12px 16px;font-weight:bold;curso
 </main>
 <footer>© 2026 Maths With Hari Babu · Learn Maths. Build Confidence. Achieve Success!</footer>
 <div class="modal show" id="loginModal"><div class="box"><div class="eyebrow">Welcome to your classroom</div><h2>Login / Register</h2><p class="sub">Sign in to access your learning space.</p><input id="userName" placeholder="Full name (for new registration)"><input id="userEmail" type="email" placeholder="Email address"><input id="userPassword" type="password" placeholder="Password (at least 6 characters)"><button style="width:100%;margin-top:10px" onclick="register()">Create Student Account</button><button class="dark" style="width:100%;margin-top:8px" onclick="login()">Login</button><p id="authMessage" class="status"></p><p class="note">New accounts are created as students. Teacher access requires approval by Hari Babu.</p></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL="https://ilkjzgnymzdhwaprhugp.supabase.co";
 const SUPABASE_KEY="sb_publishable_Z2z9cjb8wglHTZ9qciP7_Q_So8PVatI";
