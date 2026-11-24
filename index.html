@@ -38,6 +38,30 @@ button,.btn{border:0;border-radius:11px;padding:12px 16px;font-weight:bold;curso
 <main>
 <section class="hero" id="home"><div class="hero-in"><div><div class="eyebrow">A better way to learn mathematics</div><h1>Understand Maths.<br><span>Grow with Confidence.</span></h1><p>Learn step by step with Hari Babu. Access mathematics lessons, study notes and practice material for school classes and Intermediate.</p><div class="actions"><a class="btn" href="#courses">Explore Courses →</a><button class="outline" onclick="openLogin()">Student / Teacher Login</button></div></div><div class="hero-card"><div class="symbol">📐</div><div class="eyebrow">Maths made simpler</div><h3 style="color:white">Every concept, one step at a time.</h3><p>Watch recorded classes, revise with notes, practise questions and keep your learning organised.</p></div></div></section>
 <section class="wrap" id="courses"><div class="eyebrow">Choose your level</div><h2>Explore Courses</h2><p class="sub">Select your class or Intermediate year.</p><div class="grid" id="courseGrid"></div></section>
+ <section class="wrap" id="aiTutor">
+  <div class="eyebrow">Your Personal Mathematics Tutor</div>
+  <h2>🤖 HARI SIR AI</h2>
+  <p class="sub">Ask any mathematics question. Get simple, step-by-step explanations.</p>
+
+  <div class="card">
+    <select id="aiClass">
+      <option>Class 6</option>
+      <option>Class 7</option>
+      <option selected>Class 8</option>
+      <option>Class 9</option>
+      <option>Class 10</option>
+      <option>Intermediate 1st Year</option>
+      <option>Intermediate 2nd Year</option>
+    </select>
+
+    <div id="aiChat" class="empty" style="min-height:120px;margin:15px 0">
+      Hello! I am HARI SIR AI. Ask me a mathematics question!
+    </div>
+
+    <textarea id="aiQuestion" placeholder="Type your maths question here..."></textarea>
+    <button id="aiSend" onclick="askHariAI()">Ask HARI SIR AI</button>
+  </div>
+ </section>
 <section class="features" id="features"><div class="wrap"><div class="eyebrow">Your learning toolkit</div><h2>Everything in one place</h2><p class="sub">A simple learning space for students and a teaching workspace for the teacher.</p><div class="feature-grid"><div class="feature">🎥<b>Recorded lessons</b><span>Revisit topic-wise video classes.</span></div><div class="feature">📄<b>PDF study notes</b><span>Keep notes and revision material together.</span></div><div class="feature">📝<b>Homework & tests</b><span>Practise questions and complete assignments.</span></div><div class="feature">📊<b>Marks & progress</b><span>Review scores and track learning progress.</span></div></div></div></section>
 <section class="wrap" id="about"><div class="about"><div class="card"><div class="eyebrow">About the classes</div><h2>Learn with Hari Babu</h2><p class="sub">A mathematics learning website for Classes 6 to 10 and Intermediate 1st and 2nd Year. Learn through lessons, notes and regular practice.</p></div><div class="about-dark"><div class="eyebrow">Our goal</div><h2>Learn Maths. Build Confidence.</h2><p>Strong basics make difficult problems easier. Learn at your own pace, practise regularly and keep improving.</p></div></div>
 <div class="panel" id="dashboard"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><div><div class="eyebrow">Your workspace</div><h2 id="dashTitle">Dashboard</h2><p class="sub" id="dashIntro"></p></div><button class="dark" onclick="logout()">Log out</button></div>
@@ -52,6 +76,71 @@ button,.btn{border:0;border-radius:11px;padding:12px 16px;font-weight:bold;curso
 const SUPABASE_URL="https://ilkjzgnymzdhwaprhugp.supabase.co";
 const SUPABASE_KEY="sb_publishable_Z2z9cjb8wglHTZ9qciP7_Q_So8PVatI";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let aiHistory = [];
+
+async function askHariAI() {
+  const question = $("aiQuestion").value.trim();
+  const classLevel = $("aiClass").value;
+  const chat = $("aiChat");
+  const button = $("aiSend");
+
+  if (!question) {
+    chat.textContent = "Please enter a maths question.";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Thinking...";
+
+  const userMessage = document.createElement("p");
+  userMessage.textContent = "You: " + question;
+  chat.appendChild(userMessage);
+
+  try {
+    const response = await fetch(
+      "https://ilkjzgnymzdhwaprhugp.supabase.co/functions/v1/hari-sir-ai",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_KEY
+        },
+        body: JSON.stringify({
+          question: question,
+          language: "English",
+          classLevel: classLevel,
+          history: aiHistory
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.answer) {
+      throw new Error(data.details || data.error || "AI could not answer.");
+    }
+
+    const answer = document.createElement("p");
+    answer.style.whiteSpace = "pre-wrap";
+    answer.textContent = "HARI SIR AI: " + data.answer;
+    chat.appendChild(answer);
+
+    aiHistory.push(
+      { role: "user", text: question },
+      { role: "model", text: data.answer }
+    );
+
+    $("aiQuestion").value = "";
+
+  } catch (error) {
+    const errorMessage = document.createElement("p");
+    errorMessage.textContent = "Error: " + error.message;
+    chat.appendChild(errorMessage);
+  }
+
+  button.disabled = false;
+  button.textContent = "Ask HARI SIR AI";
+}
 const courses=[["Class 6","Mathematics","📘"],["Class 7","Mathematics","📗"],["Class 8","Mathematics","📙"],["Class 9","Mathematics","📕"],["Class 10","Mathematics","🎓"],["Intermediate 1st Year","Maths 1A & 1B","📐"],["Intermediate 2nd Year","Maths 2A & 2B","📊"]];
 let currentUser=null,currentRole="student";
 const $=id=>document.getElementById(id);
