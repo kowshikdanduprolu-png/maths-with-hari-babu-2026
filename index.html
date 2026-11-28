@@ -63,7 +63,34 @@ button,.btn{border:0;border-radius:11px;padding:12px 16px;font-weight:bold;curso
     <button id="aiSend" onclick="askHariAI()">Ask HARI SIR AI</button>
   </div>
  </section>
-<section class="features" id="features"><div class="wrap"><div class="eyebrow">Your learning toolkit</div><h2>Everything in one place</h2><p class="sub">A simple learning space for students and a teaching workspace for the teacher.</p><div class="feature-grid"><div class="feature">🎥<b>Recorded lessons</b><span>Revisit topic-wise video classes.</span></div><div class="feature">📄<b>PDF study notes</b><span>Keep notes and revision material together.</span></div><div class="feature">📝<b>Homework & tests</b><span>Practise questions and complete assignments.</span></div><div class="feature">📊<b>Marks & progress</b><span>Review scores and track learning progress.</span></div></div></div></section>
+<section class="wrap" id="onlineQuiz">
+  <div class="eyebrow">Practice and Test Your Knowledge</div>
+  <h2>📝 Online Maths Quiz</h2>
+  <p class="sub">Choose your class and chapter to start a maths test.</p>
+
+  <div class="card">
+    <label>Select Your Class</label>
+    <select id="quizClass">
+      <option>Class 6</option>
+      <option>Class 7</option>
+      <option selected>Class 8</option>
+      <option>Class 9</option>
+      <option>Class 10</option>
+      <option>Intermediate 1st Year</option>
+      <option>Intermediate 2nd Year</option>
+    </select>
+
+    <label>Select Chapter</label>
+    <select id="quizChapter">
+      <option value="">Choose a chapter</option>
+    </select>
+
+    <button onclick="loadQuiz()">Start Quiz</button>
+    <div id="quizArea"></div>
+    <div id="quizResult"></div>
+  </div>
+</section>
+ <section class="features" id="features"><div class="wrap"><div class="eyebrow">Your learning toolkit</div><h2>Everything in one place</h2><p class="sub">A simple learning space for students and a teaching workspace for the teacher.</p><div class="feature-grid"><div class="feature">🎥<b>Recorded lessons</b><span>Revisit topic-wise video classes.</span></div><div class="feature">📄<b>PDF study notes</b><span>Keep notes and revision material together.</span></div><div class="feature">📝<b>Homework & tests</b><span>Practise questions and complete assignments.</span></div><div class="feature">📊<b>Marks & progress</b><span>Review scores and track learning progress.</span></div></div></div></section>
 <section class="wrap" id="about"><div class="about"><div class="card"><div class="eyebrow">About the classes</div><h2>Learn with Hari Babu</h2><p class="sub">A mathematics learning website for Classes 6 to 10 and Intermediate 1st and 2nd Year. Learn through lessons, notes and regular practice.</p></div><div class="about-dark"><div class="eyebrow">Our goal</div><h2>Learn Maths. Build Confidence.</h2><p>Strong basics make difficult problems easier. Learn at your own pace, practise regularly and keep improving.</p></div></div>
 <div class="panel" id="dashboard"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><div><div class="eyebrow">Your workspace</div><h2 id="dashTitle">Dashboard</h2><p class="sub" id="dashIntro"></p></div><button class="dark" onclick="logout()">Log out</button></div>
 <div id="studentTools" class="hidden"><h3>Student learning materials</h3><p class="sub">Browse materials shared by your teacher.</p><button id="requestTeacherBtn" onclick="requestTeacher()">Request teacher access</button><p id="requestStatus" class="note"></p></div>
